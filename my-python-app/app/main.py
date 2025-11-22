@@ -8,4 +8,4 @@ def health():
 
 @app.get("/")
 def root():
-    return {"message": "Hello from Suresh cicd_1"}
+    return {"message": "Hello from Suresh cicd_2"}
