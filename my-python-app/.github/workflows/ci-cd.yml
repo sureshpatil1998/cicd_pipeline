@@ -5,42 +5,15 @@ on:
   pull_request:
 
 jobs:
-  test:
-    name: Run Unit Tests
-    runs-on: ubuntu-latest
-
+  super-lint:
+    name: Lint code base
+    run-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-
-      - name: Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pytest
-
-      - name: Run Tests
-        run: pytest
-
-  run:
-    name: Build & Run App
-    runs-on: ubuntu-latest
-    needs: test
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-
-      - name: Run FastAPI app
-        run: |
-          uvicorn app.main:app --host 0.0.0.0 --port 8000
+      - name: Run Super-Linter
+        uses: github/super-linter@v3
+        env:
+        DEFAULT_BRANCH: main
+   
