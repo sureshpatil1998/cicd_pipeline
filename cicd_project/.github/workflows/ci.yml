@@ -1,0 +1,51 @@
+name: CI
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  superlint:
+    name: superlint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - run: pip install -r requirements.txt
+      - run: black --check .
+      - run: isort --check-only .
+      - run: flake8 .
+      - run: pylint --disable=R,C --exit-zero $(git ls-files '*.py') || true
+      - run: pylint --errors-only $(git ls-files '*.py') || exit 1
+
+  test:
+    name: test
+    needs: superlint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - run: pip install -r requirements.txt
+      - run: pytest -q
+
+  build:
+    name: build
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - run: pip install -r requirements.txt
+      - run: python -c "import app; print('import ok')"
+      - run: zip -r project.zip . -x "*.git*" "tests/*" "__pycache__/*"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: project
+          path: project.zip
