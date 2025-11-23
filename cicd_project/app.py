@@ -34,7 +34,7 @@ def create_item():
         db.session.commit()
     except IntegrityError:
         db.session.rollback()
-        return jsonify({"error": "item with that name already exists"}), 400
+        return jsonify({"error": "item with that name already exists1"}), 400
     return jsonify(item.to_dict()), 201
 
 @app.route("/items", methods=["GET"])
